@@ -1,5 +1,5 @@
 // wotoCrypto Project
-// Copyright (C) 2021 ALiwoto
+// Copyright (C) 2022 ALiwoto
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE', which is part of the source code.
 
@@ -88,6 +88,7 @@ type WotoKey interface {
 	HasEqualKind(key WotoKey) bool
 	HasEqualSignature(key WotoKey) bool
 	GetKeyLength() int
+	GetSignatureRealLength() int
 
 	// Deprecated: you can't convert any WotoKey to a FutureKey anymore.
 	// Please use GenerateFutureKey helper function.

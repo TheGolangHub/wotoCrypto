@@ -1,5 +1,5 @@
 // wotoCrypto Project
-// Copyright (C) 2021 ALiwoto
+// Copyright (C) 2022 ALiwoto
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE', which is part of the source code.
 
@@ -23,7 +23,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/TheGolangHub/wotoCrypto/wotoCrypto"
+	wcr "github.com/TheGolangHub/wotoCrypto/wotoCrypto"
 )
 
 func OldTestWorkerPool01(t *testing.T) {
@@ -186,8 +186,8 @@ func testCrypto02Worker(t *testing.T, index int, originData []byte) {
 		key = allKeysTest02[index]
 	}
 
-	data := wotoCrypto.EncryptData(key, originData)
-	myData := wotoCrypto.DecryptData(key, data)
+	data := wcr.EncryptData(key, originData)
+	myData := wcr.DecryptData(key, data)
 	if !bytes.Equal(myData, originData) {
 		t.Error("data sequences are not equal in index " +
 			strconv.Itoa(len(originData)) + ":")
@@ -212,37 +212,37 @@ var (
 			0x1f, 0x35, 0x2c, 0x07, 0x3b, 0x61, 0x08, 0xd7, 0x2d, 0x98, 0xa3, 0x09, 0x14, 0xdf, 0xf4},
 		commonInput,
 	}
-	allCryptoLayers = []wotoCrypto.CryptoLayer{
+	allCryptoLayers = []wcr.CryptoLayer{
 		{
-			Kind: wotoCrypto.CryptoLayerKindO27,
+			Kind: wcr.CryptoLayerKindO27,
 			Hash: string(allHashesTestPresentKey01[0x0]),
 		},
 		{
-			Kind: wotoCrypto.CryptoLayerKindO27,
+			Kind: wcr.CryptoLayerKindO27,
 			Hash: string(allHashesTestPresentKey01[0x1]),
 		},
 		{
-			Kind: wotoCrypto.CryptoLayerKindO27,
+			Kind: wcr.CryptoLayerKindO27,
 			Hash: string(allHashesTestPresentKey01[0x2]),
 		},
 		{
-			Kind: wotoCrypto.CryptoLayerKindO27,
+			Kind: wcr.CryptoLayerKindO27,
 			Hash: string(allHashesTestPresentKey01[0x3]),
 		},
 		{
-			Kind: wotoCrypto.CryptoLayerKindO27,
+			Kind: wcr.CryptoLayerKindO27,
 			Hash: string(allHashesTestPresentKey01[0x4]),
 		},
 		{
-			Kind: wotoCrypto.CryptoLayerKindO27,
+			Kind: wcr.CryptoLayerKindO27,
 			Hash: string(commonKey128),
 		},
 		{
-			Kind: wotoCrypto.CryptoLayerKindO27,
+			Kind: wcr.CryptoLayerKindO27,
 			Hash: string(commonKey192),
 		},
 		{
-			Kind: wotoCrypto.CryptoLayerKindO27,
+			Kind: wcr.CryptoLayerKindO27,
 			Hash: string(commonKey256),
 		},
 	}
@@ -271,7 +271,7 @@ var commonKey256 = []byte{
 
 var commonIV = []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f}
 
-type pKey = wotoCrypto.WotoKey
+type pKey = wcr.WotoKey
 
 func TestPresentKeyCrypto01(t *testing.T) {
 	allData := []string{
@@ -289,13 +289,18 @@ func TestPresentKeyCrypto01(t *testing.T) {
 		}),
 		string(commonIV),
 	}
-	presentKey := wotoCrypto.GeneratePresentKey(wotoCrypto.WotoAlgorithmM250)
+	presentKey := wcr.GeneratePresentKey(wcr.WotoAlgorithmM250)
 	_ = presentKey.AppendLayer(&allCryptoLayers[0x0])
 	_ = presentKey.AppendLayer(&allCryptoLayers[0x1])
 	_ = presentKey.AppendLayer(&allCryptoLayers[0x2])
 	_ = presentKey.AppendLayer(&allCryptoLayers[0x3])
 	_ = presentKey.AppendLayer(&allCryptoLayers[0x4])
 	_ = presentKey.SetSignatureByFunc(sha256.New)
+	sigRealLen := presentKey.GetSignatureRealLength()
+	if sigRealLen == 0 {
+		t.Error("Signature real length is 0")
+		return
+	}
 	for _, current := range allData {
 		testPresentKeyCrypto01Worker(t, presentKey, []byte(current))
 	}

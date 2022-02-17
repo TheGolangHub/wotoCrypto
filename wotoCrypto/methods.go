@@ -1,14 +1,23 @@
 // wotoCrypto Project
-// Copyright (C) 2021 ALiwoto
+// Copyright (C) 2022 ALiwoto
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE', which is part of the source code.
 
 package wotoCrypto
 
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "woto_bindings/common_helpers.c"
+*/
+import "C"
+
 import (
 	"encoding/json"
 	"hash"
 	"strconv"
+	"unsafe"
 )
 
 //---------------------------------------------------------
@@ -376,6 +385,15 @@ func (p *presentKey) RemoveLayers(layers ...*CryptoLayer) {
 	}
 }
 
+func (p *presentKey) GetSignatureRealLength() int {
+	if p.sig == "" {
+		return 0x0
+	}
+	myStr := C.CString(p.sig)
+	defer C.free(unsafe.Pointer(myStr))
+	return int(C.compute_signature_real_length(myStr, C.int(p.algorithm)))
+}
+
 func (p *presentKey) ToFutureKey() WotoKey {
 	return &futureKey{
 		keyLayers: p.keyLayers,
@@ -620,6 +638,15 @@ func (f *futureKey) SetSignatureByFunc(h func() hash.Hash) bool {
 	return f.SetSignatureByBytes(h().Sum(nil))
 }
 
+func (f *futureKey) GetSignatureRealLength() int {
+	if f.sig == "" {
+		return 0x0
+	}
+	myStr := C.CString(f.sig)
+	defer C.free(unsafe.Pointer(myStr))
+	return int(C.compute_signature_real_length(myStr, C.int(f.algorithm)))
+}
+
 func (f *futureKey) ToFutureKey() WotoKey {
 	return f
 }
@@ -858,6 +885,15 @@ func (p *pastKey) SetSignatureByFunc(h func() hash.Hash) bool {
 		return false
 	}
 	return p.SetSignatureByBytes(h().Sum(nil))
+}
+
+func (p *pastKey) GetSignatureRealLength() int {
+	if p.sig == "" {
+		return 0x0
+	}
+	myStr := C.CString(p.sig)
+	defer C.free(unsafe.Pointer(myStr))
+	return int(C.compute_signature_real_length(myStr, C.int(p.algorithm)))
 }
 
 func (p *pastKey) ToFutureKey() WotoKey {
