@@ -354,6 +354,8 @@ func testPresentKeySig01(t *testing.T, key pKey, h func() hash.Hash) {
 		t.Error("Signature real length is invalid")
 		return
 	}
+
+	logStr("signature value set to " + key.GetSignature())
 }
 
 func testPresentKeyCrypto01Worker(t *testing.T, key pKey, originData []byte) {
