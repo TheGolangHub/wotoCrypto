@@ -140,9 +140,15 @@ func decrypt(t *testing.T, data []byte, passphrase string) []byte {
 
 func TestCrypto01(t *testing.T) {
 	cipherText := encrypt(t, []byte("Hello World"), "password")
-	fmt.Printf("Encrypted: %x\n", cipherText)
+	if len(cipherText) == 0 {
+		t.Error("Failed to encrypt data")
+		return
+	}
 	plainText := decrypt(t, cipherText, "password")
-	fmt.Printf("Decrypted: %s\n", plainText)
+	if len(plainText) == 0 {
+		t.Error("Failed to decrypt data")
+		return
+	}
 }
 
 func TestCrypto02(t *testing.T) {
@@ -197,6 +203,11 @@ func testCrypto02Worker(t *testing.T, index int, originData []byte) {
 		logB(originData)
 		return
 	}
+
+	logStr("encrypted data is: ")
+	logB(data)
+	logStr("decrypted data is: ")
+	logB(myData)
 }
 
 var (
@@ -288,6 +299,8 @@ func TestPresentKeyCrypto01(t *testing.T) {
 			0x1f642, 0x1f643, 0x1f917, 0x1f918, 0x1f914, 0x1f915, 0x1f922, 0x1f92d,
 		}),
 		string(commonIV),
+		"remote: Resolving deltas: 100% (10/10), completed with 8 local objects.",
+		"To https://github.com/TheGolangHub/wotoCrypto.git",
 	}
 	presentKey := wcr.GeneratePresentKey(wcr.WotoAlgorithmM250)
 	_ = presentKey.AppendLayer(&allCryptoLayers[0x0])
