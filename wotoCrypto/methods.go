@@ -394,6 +394,21 @@ func (p *presentKey) GetSignatureRealLength() int {
 	return int(C.compute_signature_real_length(myStr, C.int(p.algorithm)))
 }
 
+func (p *presentKey) IsRealLengthInvalid() bool {
+	if p.sig == "" {
+		return true
+	}
+
+	myStr := C.CString(p.sig)
+	myL := C.int(p.algorithm)
+	defer C.free(unsafe.Pointer(myStr))
+	return C.is_real_length_invalid(C.compute_signature_real_length(myStr, myL), myL) > 0
+}
+
+func (p *presentKey) String() string {
+	return "PresentKey with signature: " + p.sig
+}
+
 func (p *presentKey) ToFutureKey() WotoKey {
 	return &futureKey{
 		keyLayers: p.keyLayers,
@@ -647,6 +662,21 @@ func (f *futureKey) GetSignatureRealLength() int {
 	return int(C.compute_signature_real_length(myStr, C.int(f.algorithm)))
 }
 
+func (f *futureKey) IsRealLengthInvalid() bool {
+	if f.sig == "" {
+		return true
+	}
+
+	myStr := C.CString(f.sig)
+	myL := C.int(f.algorithm)
+	defer C.free(unsafe.Pointer(myStr))
+	return C.is_real_length_invalid(C.compute_signature_real_length(myStr, myL), myL) > 0
+}
+
+func (f *futureKey) String() string {
+	return "FutureKey with signature: " + f.sig
+}
+
 func (f *futureKey) ToFutureKey() WotoKey {
 	return f
 }
@@ -894,6 +924,21 @@ func (p *pastKey) GetSignatureRealLength() int {
 	myStr := C.CString(p.sig)
 	defer C.free(unsafe.Pointer(myStr))
 	return int(C.compute_signature_real_length(myStr, C.int(p.algorithm)))
+}
+
+func (p *pastKey) IsRealLengthInvalid() bool {
+	if p.sig == "" {
+		return true
+	}
+
+	myStr := C.CString(p.sig)
+	myL := C.int(p.algorithm)
+	defer C.free(unsafe.Pointer(myStr))
+	return C.is_real_length_invalid(C.compute_signature_real_length(myStr, myL), myL) > 0
+}
+
+func (p *pastKey) String() string {
+	return "PastKey with signature: " + p.sig
 }
 
 func (p *pastKey) ToFutureKey() WotoKey {

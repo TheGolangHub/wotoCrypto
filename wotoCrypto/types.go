@@ -5,7 +5,11 @@
 
 package wotoCrypto
 
-import ws "github.com/ALiwoto/StrongStringGo/strongStringGo"
+import (
+	"fmt"
+
+	ws "github.com/ALiwoto/StrongStringGo/strongStringGo"
+)
 
 type WotoAlgorithm uint16
 type WotoLayerLength uint32
@@ -70,6 +74,7 @@ type BytesObject interface {
 }
 
 type WotoKey interface {
+	fmt.Stringer
 	ws.Validator
 	ws.SignatureContainer
 	ws.Serializer
@@ -89,6 +94,7 @@ type WotoKey interface {
 	HasEqualSignature(key WotoKey) bool
 	GetKeyLength() int
 	GetSignatureRealLength() int
+	IsRealLengthInvalid() bool
 
 	// Deprecated: you can't convert any WotoKey to a FutureKey anymore.
 	// Please use GenerateFutureKey helper function.

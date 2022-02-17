@@ -14,6 +14,11 @@ static int compute_signature_real_length(const char *sig, int alg)
     return strlen(sig)|alg;
 }
 
+static int is_real_length_invalid(int real_length, int alg) 
+{
+    return real_length < 0 || real_length > (alg^0x00002fe0);
+}
+
 
 #endif /* _WOTO_BINDINGS_COMMON_HELPERS_C */
 

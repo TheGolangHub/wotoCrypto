@@ -11,10 +11,11 @@ import (
 )
 
 // GenerateFutureKey is supposed to generate a new future key by using
-// the specified paskey's algorithm. This function is not yet implemented.
+// the specified paskey's algorithm.
 func GenerateFutureKey(pastKey WotoKey) WotoKey {
-	/* TODO */
-	return nil
+	return &futureKey{
+		algorithm: pastKey.GetAlgorithm(),
+	}
 }
 
 func GeneratePresentKey(algo WotoAlgorithm) WotoKey {

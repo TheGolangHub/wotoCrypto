@@ -11,10 +11,13 @@ import (
 	"crypto/cipher"
 	"crypto/md5"
 	"crypto/rand"
+	"crypto/sha1"
 	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"hash"
 	"io"
 	"log"
 	"net"
@@ -24,6 +27,7 @@ import (
 	"testing"
 
 	wcr "github.com/TheGolangHub/wotoCrypto/wotoCrypto"
+	"golang.org/x/crypto/sha3"
 )
 
 func OldTestWorkerPool01(t *testing.T) {
@@ -308,12 +312,15 @@ func TestPresentKeyCrypto01(t *testing.T) {
 	_ = presentKey.AppendLayer(&allCryptoLayers[0x2])
 	_ = presentKey.AppendLayer(&allCryptoLayers[0x3])
 	_ = presentKey.AppendLayer(&allCryptoLayers[0x4])
-	_ = presentKey.SetSignatureByFunc(sha256.New)
-	sigRealLen := presentKey.GetSignatureRealLength()
-	if sigRealLen == 0 {
-		t.Error("Signature real length is 0")
-		return
-	}
+
+	testPresentKeySig01(t, presentKey, sha3.New256)
+	testPresentKeySig01(t, presentKey, md5.New)
+	testPresentKeySig01(t, presentKey, sha256.New224)
+	testPresentKeySig01(t, presentKey, sha1.New)
+	testPresentKeySig01(t, presentKey, sha512.New384)
+	testPresentKeySig01(t, presentKey, sha512.New)
+	testPresentKeySig01(t, presentKey, sha512.New512_224)
+
 	for _, current := range allData {
 		testPresentKeyCrypto01Worker(t, presentKey, []byte(current))
 	}
@@ -333,6 +340,20 @@ func TestPresentKeyCrypto01(t *testing.T) {
 		"\xdf": 0x23, "\xdd": 0x24,
 	})
 	testPresentKeyCrypto01Worker(t, presentKey, b)
+}
+
+func testPresentKeySig01(t *testing.T, key pKey, h func() hash.Hash) {
+	_ = key.SetSignatureByFunc(h)
+	sigRealLen := key.GetSignatureRealLength()
+	if sigRealLen == 0 {
+		t.Error("Signature real length is 0")
+		return
+	}
+
+	if key.IsRealLengthInvalid() {
+		t.Error("Signature real length is invalid")
+		return
+	}
 }
 
 func testPresentKeyCrypto01Worker(t *testing.T, key pKey, originData []byte) {

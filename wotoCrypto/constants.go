@@ -3,6 +3,11 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE', which is part of the source code.
 
+/*
+Useful resources: http://www.usenix.org/event/usenix99/provos/provos.pdf
+
+*/
+
 package wotoCrypto
 
 const (
