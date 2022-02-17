@@ -19,6 +19,7 @@ import (
 	"log"
 	"net"
 	"sort"
+	"strconv"
 	"sync"
 	"testing"
 
@@ -187,8 +188,13 @@ func testCrypto02Worker(t *testing.T, index int, originData []byte) {
 
 	data := wotoCrypto.EncryptData(key, originData)
 	myData := wotoCrypto.DecryptData(key, data)
-	if bytes.Equal(myData, originData) {
-		t.Error("data sequences are not equal: ", myData, originData)
+	if !bytes.Equal(myData, originData) {
+		t.Error("data sequences are not equal in index " +
+			strconv.Itoa(len(originData)) + ":")
+		logStr("myData:")
+		logB(myData)
+		logStr("origin data:")
+		logB(originData)
 		return
 	}
 }
@@ -316,7 +322,8 @@ func testPresentKeyCrypto01Worker(t *testing.T, key pKey, originData []byte) {
 	myData := key.Decrypt(data)
 
 	if !bytes.Equal(myData, originData) {
-		t.Error("data sequences are not equal:")
+		t.Error("data sequences are not equal in index " +
+			strconv.Itoa(len(originData)) + ":")
 		logStr("myData:")
 		logB(myData)
 		logStr("origin data:")
