@@ -43,7 +43,8 @@ func encryptByBlocksNoAlgorithm(dest, key, data blockCollection) []byte {
 		dest.AppendBlock(current.Sum(key.GetBlockByIndex(index)))
 	}
 
-	return dest.ToBytes()
+	buff, _ := dest.ToBytes()
+	return buff
 }
 
 // decryptByBlocksNoAlgorithm decrypts the data with the specified key to the destinated
@@ -53,7 +54,8 @@ func decryptByBlocksNoAlgorithm(dest, key, data blockCollection) []byte {
 		dest.AppendBlock(current.Min(key.GetBlockByIndex(index)))
 	}
 
-	return dest.ToBytes()
+	buff, _ := dest.ToBytes()
+	return buff
 }
 
 func encryptByBlocks(key, data blockCollection, algorithm blockAlgorithm) []byte {
@@ -81,7 +83,8 @@ func encryptByBlocks(key, data blockCollection, algorithm blockAlgorithm) []byte
 		return encryptByBlocksNoAlgorithm(finalCollection, key, data)
 	}
 
-	return finalCollection.ToBytes()
+	buff, _ := finalCollection.ToBytes()
+	return buff
 }
 
 func decryptByBlocks(key, data blockCollection, algorithm blockAlgorithm) []byte {
@@ -105,7 +108,8 @@ func decryptByBlocks(key, data blockCollection, algorithm blockAlgorithm) []byte
 		return decryptByBlocksNoAlgorithm(finalCollection, key, data)
 	}
 
-	return finalCollection.ToBytes()
+	buff, _ := finalCollection.ToBytes()
+	return buff
 }
 
 func EncryptAES(key, data []byte) []byte {

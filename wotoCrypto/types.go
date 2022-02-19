@@ -68,11 +68,6 @@ type LayerBlock interface {
 	GetKeyLayersCount() int
 }
 
-type BytesObject interface {
-	ToBytes() []byte
-	Length() int
-}
-
 type WotoKey interface {
 	fmt.Stringer
 	ws.Validator
@@ -109,6 +104,7 @@ type WotoKey interface {
 
 type singleBlock interface {
 	ws.Validator
+	ws.BitsBlocks
 
 	IsEmpty() bool
 	IsNonZero() bool
@@ -116,7 +112,6 @@ type singleBlock interface {
 	ToUInt64() uint64
 	ToInt32() int32
 	ToUInt32() uint32
-	GetBitsSize() int
 	Sum(singleBlock) singleBlock
 	Min(singleBlock) singleBlock
 	Mul(singleBlock) singleBlock
@@ -124,7 +119,7 @@ type singleBlock interface {
 }
 
 type blockCollection interface {
-	BytesObject
+	ws.BytesObject
 
 	GetBlocks() []singleBlock
 	GetRelativeIndex(int) int

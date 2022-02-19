@@ -32,5 +32,6 @@ var (
 )
 
 var (
-	ErrInvalidKey = errors.New("invalid key")
+	ErrInvalidKey         = errors.New("invalid key")
+	ErrInvalidCryptoLayer = errors.New("invalid crypto layer")
 )

@@ -50,12 +50,12 @@ func (l *CryptoLayer) IsValid() bool {
 	return l.GetLayerLength().IsValid()
 }
 
-func (l *CryptoLayer) ToBytes() []byte {
+func (l *CryptoLayer) ToBytes() ([]byte, error) {
 	if !l.IsValid() {
-		return nil
+		return nil, ErrInvalidCryptoLayer
 	}
 
-	return []byte(l.Hash)
+	return []byte(l.Hash), nil
 }
 
 func (l *CryptoLayer) getNewLayerContainer() *LayerLengthContainer {
@@ -255,26 +255,46 @@ func (p *presentKey) Decrypt(data []byte) []byte {
 }
 
 func (p *presentKey) encryptM250(data []byte) []byte {
-	var currentKey []byte
-	currentKey = p.keyLayers[0x0].ToBytes()
+	currentKey, err := p.keyLayers[0x0].ToBytes()
+	if err != nil {
+		return nil
+	}
+	var buff []byte
+
 	for i, currentLayer := range p.keyLayers {
 		if i == 0x0 {
 			continue
 		}
-		currentKey = EncryptData(currentKey, currentLayer.ToBytes())
+
+		buff, err = currentLayer.ToBytes()
+		if err != nil {
+			return nil
+		}
+
+		currentKey = EncryptData(currentKey, buff)
 	}
 
 	return EncryptData(currentKey, data)
 }
 
 func (p *presentKey) decryptM250(data []byte) []byte {
-	var currentKey []byte
-	currentKey = p.keyLayers[0x0].ToBytes()
+	currentKey, err := p.keyLayers[0x0].ToBytes()
+	if err != nil {
+		return nil
+	}
+
+	var buff []byte
 	for i, currentLayer := range p.keyLayers {
 		if i == 0x0 {
 			continue
 		}
-		currentKey = EncryptData(currentKey, currentLayer.ToBytes())
+
+		buff, err = currentLayer.ToBytes()
+		if err != nil {
+			return nil
+		}
+
+		currentKey = EncryptData(currentKey, buff)
 	}
 
 	return DecryptData(currentKey, data)
@@ -1066,13 +1086,13 @@ func (c *privateCollection) GetBlockByIndex(index int) singleBlock {
 	return c.blocks[c.GetRelativeIndex(index)]
 }
 
-func (c *privateCollection) ToBytes() []byte {
+func (c *privateCollection) ToBytes() ([]byte, error) {
 	var rawData string
 	for _, current := range c.blocks {
 		rawData += string(current)
 	}
 
-	return []byte(rawData)
+	return []byte(rawData), nil
 }
 
 func (c *privateCollection) BlockSize() int {
