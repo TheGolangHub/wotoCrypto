@@ -102,6 +102,17 @@ type WotoKey interface {
 	setLayers(layers KeyLayerCollection) bool
 }
 
+type KeyCollection interface {
+	ws.Validator
+
+	ContinueLifeCycle()
+	Sync()
+}
+
+type KeysContainer interface {
+	SetAsKeys(value KeyCollection)
+}
+
 type singleBlock interface {
 	ws.Validator
 	ws.BitsBlocks
