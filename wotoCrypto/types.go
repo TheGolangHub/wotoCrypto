@@ -8,7 +8,7 @@ package wotoCrypto
 import (
 	"fmt"
 
-	ws "github.com/ALiwoto/StrongStringGo/strongStringGo"
+	ws "github.com/AnimeKaizoku/ssg/ssg"
 )
 
 type WotoAlgorithm uint16
