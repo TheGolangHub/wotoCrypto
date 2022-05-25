@@ -5,7 +5,7 @@
 
 module github.com/TheGolangHub/wotoCrypto
 
-go 1.17
+go 1.18
 
 require (
 	github.com/AnimeKaizoku/ssg v1.1.17
