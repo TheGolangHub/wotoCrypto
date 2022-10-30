@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	ws "github.com/AnimeKaizoku/ssg/ssg"
+	"github.com/TheGolangHub/wotoCrypto/wotoCrypto/passContainer"
 )
 
 type WotoAlgorithm uint16
@@ -17,6 +18,9 @@ type CryptoLayerKind uint8
 type blockAction func(first, second singleBlock) singleBlock
 type blockAlgorithmId uint8
 type KeyLayerCollection []CryptoLayer
+
+type PasswordContainer256 = passContainer.PasswordContainer256
+type PasswordContainer512 = passContainer.PasswordContainer256
 
 type LayerLengthContainer struct {
 	Length    WotoLayerLength
